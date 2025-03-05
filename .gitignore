@@ -1,0 +1,3 @@
+# not needed in my case, python >= 3.13
+# https://docs.python.org/3/library/venv.html
+.venv/
