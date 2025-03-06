@@ -12,6 +12,6 @@ class DocumentVersion:
     """
 
     def __init__(self, version_number: int, content: str):
-        self.version_number = version_number
-        self.content = content
-        self.timestamp = datetime.now()
+        self.version_number: int = version_number
+        self.content: str = content
+        self.timestamp: datetime = datetime.now()

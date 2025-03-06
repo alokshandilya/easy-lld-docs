@@ -12,7 +12,7 @@ class Document:
     """
 
     def __init__(self, doc_id: int, owner_id: int, content: str):
-        self.doc_id = doc_id
-        self.owner_id = owner_id
-        self.content = content
-        self.created_at = datetime.now()
+        self.doc_id: int = doc_id
+        self.owner_id: int = owner_id
+        self.content: str = content
+        self.created_at: datetime = datetime.now()
