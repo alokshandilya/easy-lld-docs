@@ -22,7 +22,7 @@ def main() -> None:
         1: User(1, "Alok"),
         2: User(2, "Aryan"),
         3: User(3, "Tridip"),
-        4: User(4, "Chaya"),
+        4: User(4, "Vivek"),
     }
     owner = users[1]
     editor = users[2]
@@ -77,9 +77,24 @@ def main() -> None:
 
     # Test 7: Version history and diffs
     print("\n--- Editing Process ---")
+
+    editor_content: str = """
+    Hello, I am Editor. I am editing this document.
+    this is only for testing the version history and diffs.
+
+    Nothing serious here.
+    """
+
+    owner_content: str = """
+    Hello, I am Owner. I am editing this document.
+
+    This is only for testing the version history and diffs.
+    Remember, I am the owner of this document.
+    """
+
     try:
-        doc_manager.edit_document(editor, doc_id, "Editor edited content v2")
-        doc_manager.edit_document(owner, doc_id, "Owner edited content v3")
+        doc_manager.edit_document(editor, doc_id, editor_content)
+        doc_manager.edit_document(owner, doc_id, owner_content)
         doc_manager.edit_document(viewer, doc_id, "Viewe edited content v4")
     except PermissionDeniedError as e:
         print(f"Edit attempt failed: {e}")
