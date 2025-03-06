@@ -1,7 +1,19 @@
+from typing import TYPE_CHECKING, Any, Dict
+
 from exceptions import DocumentNotFoundError
+from models.user import User
+
+if TYPE_CHECKING:
+    from managers.document_manager import DocumentManager
+    from managers.sharing_manager import SharingManager
 
 
-def print_collaborators(doc_manager, sharing_manager, users, doc_id):
+def print_collaborators(
+    doc_manager: "DocumentManager",
+    sharing_manager: "SharingManager",
+    users: Dict[int, "User"],
+    doc_id: int,
+) -> None:
     try:
         doc = doc_manager.get_document(doc_id)
         owner = users[doc.owner_id]
@@ -17,14 +29,14 @@ def print_collaborators(doc_manager, sharing_manager, users, doc_id):
         print(f"Error: {e}")
 
 
-def print_versions(version_manager, doc_id):
+def print_versions(version_manager: Any, doc_id: int) -> None:
     try:
         versions = version_manager.get_versions(doc_id)
         print(f"\nVersions for Document {doc_id}:")
         for version in versions:
             print(f"Version {version.version_number} ({version.timestamp})")
 
-        # Show diffs between consecutive versions
+        # diffs between consecutive versions
         for i in range(1, len(versions)):
             diff = version_manager.get_version_diff(doc_id, i, i + 1)
             print(f"\nDiff between v{i} and v{i+1}:")
