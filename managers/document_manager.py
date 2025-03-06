@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Dict
+from typing import TYPE_CHECKING, Dict, Optional
 
 from exceptions import DocumentNotFoundError, PermissionDeniedError
 from models.document import Document
@@ -12,11 +12,11 @@ if TYPE_CHECKING:
 class DocumentManager:
     def __init__(
         self,
-        sharing_manager: "SharingManager",
+        sharing_manager: Optional["SharingManager"],
         version_manager: "VersionManager",
     ):
         self.documents: Dict[int, Document] = {}
-        self.sharing_manager: "SharingManager" = sharing_manager
+        self.sharing_manager: Optional["SharingManager"] = sharing_manager
         self.version_manager: "VersionManager" = version_manager
         self.next_doc_id: int = 1
 
@@ -34,6 +34,8 @@ class DocumentManager:
 
         doc = self.documents[doc_id]
         if user.user_id != doc.owner_id:
+            if self.sharing_manager is None:
+                raise RuntimeError("SharingManager is not instantiated")
             role = self.sharing_manager.get_role(doc_id, user.user_id)
             if role != "editor":
                 raise PermissionDeniedError("Edit permission denied")
@@ -49,7 +51,10 @@ class DocumentManager:
             raise PermissionDeniedError("Delete permission denied")
 
         del self.documents[doc_id]
-        self.sharing_manager.remove_document(doc_id)
+        if self.sharing_manager is not None:
+            self.sharing_manager.remove_document(doc_id)
+        else:
+            raise RuntimeError("SharingManager is not instantiated")
         self.version_manager.remove_document(doc_id)
 
     def get_document_versions(self, user: "User", doc_id: int) -> list:
@@ -57,6 +62,8 @@ class DocumentManager:
             raise DocumentNotFoundError(f"Document {doc_id} not found")
 
         doc = self.documents[doc_id]
+        if self.sharing_manager is None:
+            raise RuntimeError("SharingManager is not instantiated")
         role = self.sharing_manager.get_role(doc_id, user.user_id)
 
         if user.user_id != doc.owner_id and not role:
