@@ -1,21 +1,23 @@
-from typing import Dict
+from typing import TYPE_CHECKING, Dict
 
 from exceptions import DocumentNotFoundError, PermissionDeniedError
-from managers.sharing_manager import SharingManager
-from managers.version_manager import VersionManager
 from models.document import Document
 from models.user import User
+
+if TYPE_CHECKING:
+    from managers.sharing_manager import SharingManager
+    from managers.version_manager import VersionManager
 
 
 class DocumentManager:
     def __init__(
         self,
-        sharing_manager: SharingManager,
-        version_manager: VersionManager,
+        sharing_manager: "SharingManager",
+        version_manager: "VersionManager",
     ):
         self.documents: Dict[int, Document] = {}
-        self.sharing_manager: SharingManager = sharing_manager
-        self.version_manager: VersionManager = version_manager
+        self.sharing_manager: "SharingManager" = sharing_manager
+        self.version_manager: "VersionManager" = version_manager
         self.next_doc_id: int = 1
 
     def create_document(self, owner: "User", content: str) -> Document:

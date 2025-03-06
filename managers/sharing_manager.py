@@ -1,7 +1,6 @@
 from typing import TYPE_CHECKING, Dict, Optional
 
 from exceptions import DocumentNotFoundError, PermissionDeniedError
-from managers.document_manager import DocumentManager
 
 if TYPE_CHECKING:
     from managers.document_manager import DocumentManager
