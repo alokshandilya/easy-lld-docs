@@ -1,15 +1,24 @@
+from typing import Dict
+
 from exceptions import DocumentNotFoundError, PermissionDeniedError
+from managers.sharing_manager import SharingManager
+from managers.version_manager import VersionManager
 from models.document import Document
+from models.user import User
 
 
 class DocumentManager:
-    def __init__(self, sharing_manager, version_manager):
-        self.documents = {}
-        self.sharing_manager = sharing_manager
-        self.version_manager = version_manager
-        self.next_doc_id = 1
+    def __init__(
+        self,
+        sharing_manager: SharingManager,
+        version_manager: VersionManager,
+    ):
+        self.documents: Dict[int, Document] = {}
+        self.sharing_manager: SharingManager = sharing_manager
+        self.version_manager: VersionManager = version_manager
+        self.next_doc_id: int = 1
 
-    def create_document(self, owner, content: str) -> Document:
+    def create_document(self, owner: "User", content: str) -> Document:
         doc_id = self.next_doc_id
         self.next_doc_id += 1
         doc = Document(doc_id, owner.user_id, content)
@@ -17,7 +26,7 @@ class DocumentManager:
         self.version_manager.save_version(doc_id, content)
         return doc
 
-    def edit_document(self, user, doc_id: int, new_content: str):
+    def edit_document(self, user: "User", doc_id: int, new_content: str) -> None:
         if doc_id not in self.documents:
             raise DocumentNotFoundError(f"Document {doc_id} not found")
 
@@ -30,7 +39,7 @@ class DocumentManager:
         doc.content = new_content
         self.version_manager.save_version(doc_id, new_content)
 
-    def delete_document(self, user, doc_id: int):
+    def delete_document(self, user: "User", doc_id: int) -> None:
         if doc_id not in self.documents:
             raise DocumentNotFoundError(f"Document {doc_id} not found")
 
@@ -41,7 +50,7 @@ class DocumentManager:
         self.sharing_manager.remove_document(doc_id)
         self.version_manager.remove_document(doc_id)
 
-    def get_document_versions(self, user, doc_id: int):
+    def get_document_versions(self, user: "User", doc_id: int) -> list:
         if doc_id not in self.documents:
             raise DocumentNotFoundError(f"Document {doc_id} not found")
 
